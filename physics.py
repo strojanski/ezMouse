@@ -15,7 +15,7 @@ for f in csv_files:
 
   #pandanize csv data and print
   data = pd.read_csv(f)
-  print(data)
+  #print(data)
 
   #plot data
   #data.plot(x='Time (s)')
@@ -28,7 +28,7 @@ for f in csv_files:
 
   for i in range(len(data)):
     diffTime = data.loc[i, "Time (s)"] - diffTime
-    diffX = data.loc[i, "Linear Acceleration x (m/s^2)"] - diffX
+    diffX = data.loc[i, "Linear Acceleration x (m/s^2)"]
     hitrost +=  diffTime * diffX
     data.loc[i,"hitrost"] = hitrost
 
