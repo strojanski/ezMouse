@@ -1,24 +1,31 @@
 import socket
-import threading
+from multiprocessing.connection import Listener
+import time
+import sys
+import signal
+#class Server:
+#    def __init__()
 
-#bind_ip = '127.0.0.1'     # Listen on all addresses
-bind_ip = socket.gethostbyname(socket.gethostname())
-bind_port = 4444
 
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind((bind_ip, bind_port))
-server.listen(5)
+listen_ip = socket.gethostbyname(socket.gethostname())
+listen_port = 4444     
 
-print(f"Listening on {bind_ip}:{bind_port}")
+listener = Listener((listen_ip, listen_port), authkey=b'password')
+print (f"Listening on {listen_ip}:{listen_port}")
 
-def handle_client(client_socket):
-    request = client_socket.recv(1024)
-    print(f"Received: {request}")
-    client_socket.send(b"ACK!")
-    client_socket.close()
+print ("Ready to connect")
 
+# Accept a connection
+conn = listener.accept()
+
+count = 0
+start = time.time()
 while True:
-    client, addr = server.accept()
-    print("[*] Accepted connection from: {}:{}".format(addr[0], addr[1]))
-    client_handler = threading.Thread(target=handle_client, args=(client,))
-    client_handler.start()
+    msg = conn.recv()
+    print(f"received: {msg}")
+    
+    reply = f"Received msg thx, {start - time.time()}"
+    conn.send(reply)
+    
+    print(count)
+    count += 1
