@@ -69,7 +69,7 @@ for f in csv_files:
         velocityX += (timeDiff * accX)*10
 
         # if acc change prefix reset speedCheck
-        if(i > 0 and (data.loc[i - 1, "velocityX"]*velocityX) < 0):
+        if(i > 0 and (data.loc[i - 1, "accX"]*accX) < 0):
             print("tuki1", i, data.loc[i, "time"])
             speedCheckX = False
 
@@ -107,7 +107,7 @@ for f in csv_files:
         velocityY += (timeDiff * accY)*10
 
         # if acc change prefix reset speedCheck
-        if(i > 0 and (data.loc[i - 1, "velocityY"]*velocityY) < 0):
+        if(i > 0 and (data.loc[i - 1, "accY"]*accY) < 0):
             print("tuki2", i, data.loc[i, "time"])
             speedCheckY = False
         
