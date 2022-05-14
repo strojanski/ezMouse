@@ -6,12 +6,9 @@ import os
 import glob
 
 # functions
-
-
 def integrate(x, y):
     area = np.trapz(y=y, x=x)
     return area
-
 
 # path for test data
 path = os.getcwd() + "/testData"
@@ -57,5 +54,5 @@ for f in csv_files:
             data.loc[i, "hitrost"] = hitrost
             data.loc[i, "pot"] = pot
 
-    data.plot(x='time', y=['x', 'hitrost'])
+    data.plot(x='time', y=['x', 'hitrost', 'pot'])
     plt.show()
