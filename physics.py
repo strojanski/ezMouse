@@ -38,10 +38,10 @@ for f in csv_files:
 
     # parameters (TODO adjust this parameters for best results)
     smoothening = 15  # shows how agresive is smoothening
-    thresh = 0.3  # treshold for acceleration (possible values between 0 and 2)
+    thresh = 0.2  # treshold for acceleration (possible values between 0 and 2)
     threshMovment = 3  # How many times over the tresh before starting to mesure
     stall = 10  # For corrupt data
-    stallUpper = 4  # stallUpper - stall = times under the tresh before velocity is set to 0
+    stallUpper = 25  # stallUpper - stall = times under the tresh before velocity is set to 0
 
     #corrupt velocity debuging
     velocityXDebug = accXDebug = 0
@@ -62,7 +62,7 @@ for f in csv_files:
         accX = data.loc[i, "accX"]
 
         # threshold for data cleanup. Recognize big changes in accel, and start messuring velocity
-        """if(abs(accX) > thresh and threshX < stallUpper):
+        if(abs(accX) > thresh and threshX < stallUpper):
             threshX += 1
         elif(threshX > 0):
             threshX -= 1
@@ -70,11 +70,11 @@ for f in csv_files:
         # if a bit of time no accel change and before begining of movement set accel to 0
         if(threshX < threshMovment):
             accX = 0
-
+        
         # if long time no data change, then mouse is not moving and data is corupt, set velocity to 0
         if(threshX < stall):
             velocityX = 0
-
+        """
         #fix for corrupt velocity 2 (if velocity changes sign => set velocity do 0 until acceleration changes sign)
         if(oppositeSigns(velocityX, velocityXDebug)):
             velocityX = 0
@@ -94,7 +94,7 @@ for f in csv_files:
         accY = data.loc[i, "accY"]
 
         # threshold for data cleanup. Recognize big changes in accel, and start messuring velocity
-        """if(abs(accY) > thresh and threshY < stallUpper):
+        if(abs(accY) > thresh and threshY < stallUpper):
             threshY += 1
         elif(threshY > 0):
             threshY -= 1
@@ -105,7 +105,7 @@ for f in csv_files:
 
         # if long time no data change, then mouse is not moving and data is corupt, set velocity to 0
         if(threshY < stall):
-            velocityY = 0"""
+            velocityY = 0
 
         velocityY += (timeDiff * accY)*10
 
