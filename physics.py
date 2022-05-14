@@ -108,12 +108,17 @@ for f in csv_files:
             velocityY = 0
 
         velocityY += (timeDiff * accY)*10
-
         distanceY += (velocityY*timeDiff)
         data.loc[i, "velocityY"] = velocityY
         data.loc[i, "distanceY"] = distanceY
 
+    #ploting all info, dependent on time
     data.plot(x='time', y=['accX', 'velocityX',
               'distanceX', 'accY', 'velocityY', 'distanceY'])
     plt.title(f.removeprefix(path+"/"))
+    plt.show()
+
+    #ploting path over x and y coordinates
+    data.plot(x='distanceX', y='distanceY')
+    plt.title(f.removeprefix(path+"/") + "koordinate poti")
     plt.show()
