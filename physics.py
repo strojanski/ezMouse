@@ -16,6 +16,10 @@ def smooth(y, box_pts):
     y_smooth = np.convolve(y, box, mode='same')
     return y_smooth
 
+# if two integers have opposite signs.
+def oppositeSigns(x, y):
+    return x*y >= 0.0
+
 # path for test data
 path = os.getcwd() + "/Testdata"
 
@@ -29,7 +33,7 @@ for f in csv_files:
     data.columns = ['time', 'accX', 'accY', 'accZ', 'abs']
 
     # set initial values (TODO - adjust when live data)
-    speedX = speedY = timeDiff = distanceX = distanceY = accX = accY = threshX = threshY = 0
+    velocityX = velocityY = timeDiff = distanceX = distanceY = accX = accY = threshX = threshY = 0
     par = 1
 
     # parameters (TODO adjust this parameters for best results)
@@ -38,6 +42,10 @@ for f in csv_files:
     threshMovment = 3  # How many times over the tresh before starting to mesure
     stall = 10  # For corrupt data
     stallUpper = 15  # stallUpper - stall = times under the tresh before velocity is set to 0
+
+    #corrupt velocity debuging
+    velocityXDebug = accXDebug = 0
+    XDebug = False
 
 
     # filtering signal
@@ -51,7 +59,7 @@ for f in csv_files:
         # X axis
         accX = data.loc[i, "accX"]
 
-        # threshold for data cleanup. Recognize big changes in accel, and start messuring speed
+        # threshold for data cleanup. Recognize big changes in accel, and start messuring velocity
         if(abs(accX) > thresh and threshX < stallUpper):
             threshX += 1
         elif(threshX > 0):
@@ -61,19 +69,29 @@ for f in csv_files:
         if(threshX < threshMovment):
             accX = 0
 
-        # if long time no data change, then mouse is not moving and data is corupt, set speed to 0
+        # if long time no data change, then mouse is not moving and data is corupt, set velocity to 0
         if(threshX < stall):
-            speedX = 0
+            velocityX = 0
 
-        speedX += (timeDiff * accX)/100
-        distanceX += (speedX*timeDiff)/10
-        data.loc[i, "speedX"] = speedX
+        #fix for corrupt velocity 2 (if velocity changes sign => set velocity do 0 until acceleration changes sign)
+        if(oppositeSigns(velocityX, velocityXDebug)):
+            velocityX = 0
+            XDebug = True
+        if(XDebug == True and not oppositeSigns(accX, accXDebug)):
+            velocityX = 0
+            XDebug = False
+        velocityXDebug = velocityX
+        accXDebug = accX
+
+        velocityX += (timeDiff * accX)/100
+        distanceX += (velocityX*timeDiff)/10
+        data.loc[i, "velocityX"] = velocityX
         data.loc[i, "distanceX"] = distanceX
 
         # Y axis
         accY = data.loc[i, "accY"]
 
-        # threshold for data cleanup. Recognize big changes in accel, and start messuring speed
+        # threshold for data cleanup. Recognize big changes in accel, and start messuring velocity
         if(abs(accY) > thresh and threshY < stallUpper):
             threshY += 1
         elif(threshY > 0):
@@ -83,17 +101,17 @@ for f in csv_files:
         if(threshY < threshMovment):
             accY = 0
 
-        # if long time no data change, then mouse is not moving and data is corupt, set speed to 0
+        # if long time no data change, then mouse is not moving and data is corupt, set velocity to 0
         if(threshY < stall):
-            speedY = 0
+            velocityY = 0
 
-        speedY += (timeDiff * accY)/100
+        velocityY += (timeDiff * accY)/100
 
-        distanceY += (speedY*timeDiff)/100
-        data.loc[i, "speedY"] = speedY
+        distanceY += (velocityY*timeDiff)/100
+        data.loc[i, "velocityY"] = velocityY
         data.loc[i, "distanceY"] = distanceY
 
-    data.plot(x='time', y=['accX', 'speedX',
-              'distanceX', 'accY', 'speedY', 'distanceY'])
+    data.plot(x='time', y=['accX', 'velocityX',
+              'distanceX', 'accY', 'velocityY', 'distanceY'])
     plt.title(f.removeprefix(path+"/"))
     plt.show()
