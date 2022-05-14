@@ -1,9 +1,9 @@
 import numpy as np
-import scipy
 import matplotlib.pyplot as plt
 import pandas as pd
-import os
-import glob
+
+import os             #TODO remove when mergin -> just for testing
+import glob           # -||--
 
 # function for signal filtering
 def smooth(y, box_pts):
@@ -11,7 +11,7 @@ def smooth(y, box_pts):
     y_smooth = np.convolve(y, box, mode='same')
     return y_smooth
 
-# path for test data
+# path for test data  #TODO remove when mergin -> just for testing with imported data
 path = os.getcwd() + "/Testdata"
 csv_files = glob.glob(os.path.join(path, "*.csv"))
 
