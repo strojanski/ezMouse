@@ -29,16 +29,18 @@ for f in csv_files:
     hitrost = 0
     diffTime = 0
     X = 0
-    par = 1
+    par = 10
 
-    for i in range(round(len(data)/par)):
+    for i in range(0, (len(data) - par), par):
 
-        if par != 1:  # taking bigger sample size for inetgrate
-            df = data.loc[(i*par):(i*par+par)]  # data frame
-            # print(df)
+        if par != 1: #taking bigger sample size for inetgrate
+            df = data.loc[(i):(i+par)]  #data frame 
+            #print(df)
             spremembaHitrosti = integrate(
                 df["Time (s)"].values, df["Linear Acceleration x (m/s^2)"].values)  # "integrate"
             hitrost += spremembaHitrosti
+            data.loc[i:i+par, "hitrost"] = hitrost
+            #print(round((i + i + par)/2))
 
         else:  # take every sample for "integration"
             diffTime = data.loc[i, "Time (s)"] - diffTime
