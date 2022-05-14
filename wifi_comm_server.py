@@ -18,7 +18,6 @@ def smooth(y, box_pts):
     y_smooth = np.convolve(y, box, mode='same')
     return y_smooth
 
-
 def input_thread(list_of_inputs):
     input()
     list_of_inputs.append(True)
@@ -44,6 +43,8 @@ while not list_of_inputs:
     while conn.poll():
         try:
             msg = conn.recv()
+            # data = f"{sensor_data}, {self.left_value}, {self.right_value}"
+            # (3-tuple) bool bool = (float, float, float) bool bool
             print(f"received: {msg}")
             
             conn.send(b"thx")
@@ -52,3 +53,4 @@ while not list_of_inputs:
             count += 1
         except EOFError as err:
             run = False
+

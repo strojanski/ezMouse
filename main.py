@@ -9,6 +9,7 @@ from kivy.core.window import Window
 import socket
 from multiprocessing.connection import Client
 from threading import Thread
+import pandas as pd
 
 host_name = socket.gethostname()
 host_ip = socket.gethostbyname(socket.gethostname())
@@ -46,8 +47,8 @@ class MouseScreen (Screen):
     
     def connection_fun(self):
         print("")
-        #server_ip = "88.200.89.206"
-        server_ip = "192.168.43.196"
+        server_ip = "88.200.89.206"
+        #server_ip = "192.168.43.196"
         server_port = 4444
         has_data = True
         try:
@@ -57,9 +58,17 @@ class MouseScreen (Screen):
             print(f"Connection to {server_ip}:{server_port} successful")
             while has_data:
                 try:
-                    sensor_data = self.get_data()
-                    data = f"{sensor_data}, {self.left_value}, {self.right_value}"
-                    connection.send(data)     
+                    sensor_data = []
+                    for i in range(100):
+                        sensor_data.append([self.get_data()[0],
+                                            self.get_data()[1],
+                                            self.get_data()[2],
+                                            self.left_value, 
+                                            self.right_value])
+                        
+
+                    df = pd.DataFrame(sensor_data, columns=["x","y","z", "mouse_left", "mouse_right"])
+                    connection.send(df)     
                     info = connection.recv()
                 except ValueError as e:
                     print("Cant send this data")
@@ -72,13 +81,12 @@ class MouseScreen (Screen):
     def get_data(self):
         try:
             sensor = plyer.accelerometer
-            #sensor.enable()
             print(sensor.acceleration)
             return sensor.acceleration
 
         except Exception:
             #return (self.left_value, self.right_value)
-            return "Could not enable accelerometer!"
+            return ("X-val", "Y-val", "Z-val")
 
 class Mouse (App):
     def build (self):
