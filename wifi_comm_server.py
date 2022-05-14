@@ -119,7 +119,7 @@ while not list_of_inputs:
                 velocityY += (timeDiff * accY)*10
                 distanceY += (velocityY*timeDiff)
 
-            pyautogui.moveRel(distanceX*10, distanceY*10)
+            #pyautogui.moveRel(distanceX*10, distanceY*10, 1)
 
             conn.send(b"thx")
             

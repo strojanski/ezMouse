@@ -59,7 +59,7 @@ class MouseScreen (Screen):
             while has_data:
                 try:
                     sensor_data = []
-                    for i in range(101):
+                    for i in range(200):
                         data_array = [self.get_data()[0],
                                       self.get_data()[1],
                                       self.get_data()[2],
