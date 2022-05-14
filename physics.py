@@ -36,7 +36,7 @@ for f in csv_files:
             spremembaHitrosti = integrate(
                 df["Time (s)"].values, df["Linear Acceleration x (m/s^2)"].values)  # "integrate"
             hitrost += spremembaHitrosti
-            data.loc[round((i + i + par)/2), "hitrost"] = hitrost
+            data.loc[i:i+par, "hitrost"] = hitrost
             #print(round((i + i + par)/2))
 
         else: #take every sample for "integration"
