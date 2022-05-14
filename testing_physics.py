@@ -36,6 +36,7 @@ for f in csv_files:
     data["accX"] = smooth(data['accX'], smoothening)
     data["accY"] = smooth(data['accY'], smoothening)
 
+    #define type of movement (for pattern recognition)
     movementX = "stall"
 
     for i in range(len(data)):
@@ -58,8 +59,6 @@ for f in csv_files:
               movementX = "acceleration"
             elif(movementX=="movement"):
               movementX = "deceleration"
-            
-
         
         # if long time no data change, then mouse is not moving and data is corupt, set velocity to 0 
         if(threshX < stall):
