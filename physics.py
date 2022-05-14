@@ -12,6 +12,11 @@ def integrate(x, y):
     area = np.trapz(y=y, x=x)
     return area
 
+# function for signal filtering
+def smooth(y, box_pts):
+    box = np.ones(box_pts)/box_pts
+    y_smooth = np.convolve(y, box, mode='same')
+    return y_smooth
 
 # path for test data
 path = os.getcwd() + "/Testdata"
@@ -28,6 +33,9 @@ for f in csv_files:
     # set initial values (TODO - adjust when live data)
     speedX = speedY = timeDiff = distanceX = distanceY = accX = accY = thresh = 0
     par = 1
+
+    # filtering signal
+    data["accX"] = smooth(data['accX'], 15)
 
     # for i in range(0, (len(data) - par), par):
     for i in range(len(data)):
