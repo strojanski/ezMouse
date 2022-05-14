@@ -23,6 +23,8 @@ for f in csv_files:
 
     # pandanize csv data and print
     data = pd.read_csv(f)
+    #data.rename(columns={"Time (s)": "time", "Linear Acceleration x (m/s^2)": "x", "Linear Acceleration y (m/s^2)":"y"}) Not working
+
     # print(data)
 
     # set initial values (TODO - adjust when live data)
@@ -48,12 +50,12 @@ for f in csv_files:
             X = data.loc[i, "Linear Acceleration x (m/s^2)"]
 
             # treshold
-            if(abs(X) < 1):
+            if(abs(X) < 0.5):
                 X = 0
             hitrost += diffTime * X
             pot += hitrost*diffTime
             data.loc[i, "hitrost"] = hitrost
             data.loc[i, "pot"] = pot
 
-    data.plot(x='Time (s)')
+    data.plot(x='Time (s)', y={'Linear Acceleration x (m/s^2)', 'hitrost'})
     plt.show()
