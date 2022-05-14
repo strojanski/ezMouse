@@ -23,7 +23,7 @@ for f in csv_files:
 
     # pandanize csv data and print
     data = pd.read_csv(f)
-    #data.rename(columns={"Time (s)": "time", "Linear Acceleration x (m/s^2)": "x", "Linear Acceleration y (m/s^2)":"y"}) Not working
+    data.columns = ['time', 'x', 'y', 'z', 'abs']
 
     # print(data)
 
@@ -40,14 +40,14 @@ for f in csv_files:
             df = data.loc[(i):(i+par)]  #data frame 
             #print(df)
             spremembaHitrosti = integrate(
-                df["Time (s)"].values, df["Linear Acceleration x (m/s^2)"].values)  # "integrate"
+                df["time"].values, df["x"].values)  # "integrate"
             hitrost += spremembaHitrosti
             data.loc[i:i+par, "hitrost"] = hitrost
             #print(round((i + i + par)/2))
 
         else:  # take every sample for "integration"
-            diffTime = data.loc[i, "Time (s)"] - diffTime
-            X = data.loc[i, "Linear Acceleration x (m/s^2)"]
+            diffTime = data.loc[i, "time"] - diffTime
+            X = data.loc[i, "x"]
 
             # treshold
             if(abs(X) < 0.5):
@@ -57,5 +57,5 @@ for f in csv_files:
             data.loc[i, "hitrost"] = hitrost
             data.loc[i, "pot"] = pot
 
-    data.plot(x='Time (s)', y={'Linear Acceleration x (m/s^2)', 'hitrost'})
+    data.plot(x='time', y=['x', 'hitrost'])
     plt.show()
