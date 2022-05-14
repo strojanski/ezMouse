@@ -47,13 +47,13 @@ for f in csv_files:
             X = data.loc[i, "x"]
 
             # treshold
-            if(abs(X) < 0.5):
+            if(abs(X) < 0.2):
                 X = 0
             hitrost += diffTime * X
             pot += hitrost*diffTime
             data.loc[i, "hitrost"] = hitrost
             data.loc[i, "pot"] = pot
 
-    data.plot(x='time', y=['x', 'hitrost', 'pot'])
+    data.plot(x='time', y=['x', 'hitrost'])
     plt.title(f.removeprefix(path+"/"))
     plt.show()
