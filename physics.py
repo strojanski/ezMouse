@@ -28,8 +28,9 @@ for f in csv_files:
     # set initial values (TODO - adjust when live data)
     hitrost = 0
     diffTime = 0
+    pot = 0
     X = 0
-    par = 10
+    par = 1
 
     for i in range(0, (len(data) - par), par):
 
