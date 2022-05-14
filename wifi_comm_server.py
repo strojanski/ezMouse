@@ -43,12 +43,17 @@ while not list_of_inputs:
             msg = conn.recv()
             # data = f"{sensor_data}, {self.left_value}, {self.right_value}"
             # (3-tuple) bool bool = (float, float, float) bool bool
-            print(f"received: {msg}")
+            #print(f"received: {msg}")
             
             #convert string to pandas df TODO this is not correct yet
-            df = pd.read_csv(msg, sep=",")
-            df.columns = ['accX', 'accY', 'accZ', 'left_value', 'right_value']
-            data = df[['accX', 'accY']] #dataframe subset
+            #df = pd.read_csv(msg, sep=",")
+            print(msg.head())
+            print("")
+            df = msg.iloc[1:, :]
+            data = df
+            if df["accX"].values[0] == None:
+                data = df.fillna(0.0)
+            print(df.head())
 
             # set initial values (TODO - adjust when live data)
             velocityX = velocityY = timeDiff = distanceX = distanceY = accX = accY = threshX = threshY = 0
@@ -64,7 +69,7 @@ while not list_of_inputs:
             data["accX"] = smooth(data['accX'], smoothening)
             data["accY"] = smooth(data['accY'], smoothening)
 
-            for i in range(len(data)):
+            for i in range(1, len(data)):
                 #time differenc between mesurments (for velocity and distance calculation)
                 timeDiff = 0.005
 
@@ -91,8 +96,8 @@ while not list_of_inputs:
                 #velicity and distance calc
                 velocityX += (timeDiff * accX)*10
                 distanceX += (velocityX*timeDiff)
-                data.loc[i, "velocityX"] = velocityX
-                data.loc[i, "distanceX"] = distanceX
+                #data.loc[i, "velocityX"] = velocityX
+                #data.loc[i, "distanceX"] = distanceX
 
                 # Y axis (everything the same as X axis, put in function perhaps?)
                 accY = data.loc[i, "accY"]
@@ -114,7 +119,7 @@ while not list_of_inputs:
                 velocityY += (timeDiff * accY)*10
                 distanceY += (velocityY*timeDiff)
 
-            pyautogui.moveRel(distanceX, distanceY)
+            pyautogui.moveRel(distanceX*10, distanceY*10)
 
             conn.send(b"thx")
             

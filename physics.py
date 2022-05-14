@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-
+from scipy.signal import savgol_filter 
 import os             #TODO remove when mergin -> just for testing
 import glob           # -||--
 
@@ -34,6 +34,8 @@ for f in csv_files:
 
     # filtering signal
     data["accX"] = smooth(data['accX'], smoothening)
+    data["accX"] = smooth(data['accX'], smoothening)
+    data["accY"] = smooth(data['accY'], smoothening)
     data["accY"] = smooth(data['accY'], smoothening)
 
     for i in range(len(data)):

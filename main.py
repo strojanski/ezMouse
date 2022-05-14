@@ -59,15 +59,19 @@ class MouseScreen (Screen):
             while has_data:
                 try:
                     sensor_data = []
-                    for i in range(100):
-                        sensor_data.append([self.get_data()[0],
-                                            self.get_data()[1],
-                                            self.get_data()[2],
-                                            self.left_value, 
-                                            self.right_value])
+                    for i in range(101):
+                        data_array = [self.get_data()[0],
+                                      self.get_data()[1],
+                                      self.get_data()[2],
+                                      self.left_value, 
+                                      self.right_value]
+                        for i in range(3):
+                            if data_array[i] == None:
+                                data_array[i] = 0.1
+                        sensor_data.append(data_array)
                         
 
-                    df = pd.DataFrame(sensor_data, columns=["x","y","z", "mouse_left", "mouse_right"])
+                    df = pd.DataFrame(sensor_data, columns=['accX', 'accY', 'accZ', 'left_value', 'right_value'])
                     connection.send(df)     
                     info = connection.recv()
                 except ValueError as e:
@@ -86,7 +90,8 @@ class MouseScreen (Screen):
 
         except Exception:
             #return (self.left_value, self.right_value)
-            return ("X-val", "Y-val", "Z-val")
+            return (None, None, None)
+#            return (3.0, 0.0, 0.0)
 
 class Mouse (App):
     def build (self):
