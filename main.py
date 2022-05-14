@@ -1,57 +1,87 @@
-import kivy
+from multiprocessing import connection
 from kivy.app import App
-from kivy.uix.label import Label
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
-
-from multiprocessing import AuthenticationError
+import plyer
+from kivy.uix.screenmanager import ScreenManager, Screen
 import socket
 from multiprocessing.connection import Client
+from threading import Thread
 
 host_name = socket.gethostname()
 host_ip = socket.gethostbyname(socket.gethostname())
 server_ip = "88.200.89.206"
 server_port = 4444
 
-#address = (server_ip , server_port)            
-#conn = Client(address, authkey = b'password') 
-#while (True):       
-#    conn.send(b"I am client")
-#    print(conn.recv())
+class SettingsScreen (Screen):
+    pass
 
+class MouseScreen (Screen):
+    left_value = False
+    right_value = False
 
-
-class MyGrid(GridLayout):
     def __init__(self, **kwargs):
-        super(MyGrid, self).__init__(**kwargs)
-        self.cols = 1
+        super(Screen, self).__init__(**kwargs)
+        t = Thread(target=self.connection_fun)
+        t.daemon = True
+        t.start()
 
-        self.connect_btn = Button(text="connect")
-        self.connect_btn.bind(on_press=self.connection_fun)
-        self.add_widget(self.connect_btn)
-
-
-    def connection_fun(self, instance):
-        host_name = socket.gethostname()
-        host_ip = socket.gethostbyname(socket.gethostname())
+    def setLeft (self, *args):
+        self.left_value = True
+    
+    def resetLeft (self, *args):
+        self.left_value = False
+    
+    def setRight (self, *args):
+        self.right_value = True
+    
+    def resetRight (self, *args):
+        self.right_value = False
+    
+    def connection_fun(self):
+        print("")
         server_ip = "88.200.89.206"
         server_port = 4444
+        has_data = True
         try:
             print(f"Attempting to connect to {server_ip}:{server_port}")
-            self.connection = Client(address, authkey=password)
+            address = (server_ip, server_port)
+            connection = Client(address, authkey=b"password")
             print(f"Connection to {server_ip}:{server_port} successful")
-        
+            while has_data:
+                try:
+                    sensor_data = self.get_data()
+                    connection.send(sensor_data)     
+                    info = connection.recv()
+                except ValueError as e:
+                    print("Cant send this data")
         except socket.error as err:
             print(err)
-        data = list("Testing different data types")
-        #connection = connect.send_data(b"I am connecting (client)")
+            print("Cant connect")
 
 
-class MyApp(App):
-    def build(self):
-        return MyGrid()
+    def get_data(self):
+        try:
+            sensor = plyer.accelerometer
+            sensor.enable()
+            return [sensor.acceleration, self.left_value, self.right_value]
+
+        except Exception:
+            return (self.left_value, self.right_value)
+            #return "Could not enable accelerometer!"
+
+class Mouse (App):
+    def build (self):
+        shitfScreen = ScreenManager()
+        shitfScreen.add_widget(SettingsScreen(name="SettingsScreen"))
+        shitfScreen.add_widget(MouseScreen(name="MouseScreen"))
+        print("check")
+        return shitfScreen
+        
 
 
 if __name__ == "__main__":
-    MyApp().run()
+    Mouse().run()
+
+
+

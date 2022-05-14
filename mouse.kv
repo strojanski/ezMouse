@@ -1,0 +1,16 @@
+<SettingsScreen>:
+    BoxLayout:
+        Button:
+            text: 'Goto Mouse'
+            on_release: root.manager.current = 'MouseScreen'
+
+<MouseScreen>:
+    BoxLayout:
+        Button:
+            text: 'Left'
+            on_press: root.setLeft()
+            on_release: root.resetLeft()
+        Button:
+            text: 'Right'
+            on_press: root.setRight()
+            on_release: root.resetRight()

@@ -2,10 +2,14 @@ import socket
 from multiprocessing.connection import Listener
 import time
 import sys
+import _thread
 import signal
-#class Server:
-#    def __init__()
 
+# TODO continuous transfer
+
+def input_thread(list_of_inputs):
+    input()
+    list_of_inputs.append(True)
 
 listen_ip = socket.gethostbyname(socket.gethostname())
 listen_port = 4444     
@@ -18,14 +22,21 @@ print ("Ready to connect")
 # Accept a connection
 conn = listener.accept()
 
+run = True
+
 count = 0
 start = time.time()
-while True:
-    msg = conn.recv()
-    print(f"received: {msg}")
-    
-    reply = f"Received msg thx, {start - time.time()}"
-    conn.send(reply)
-    
-    print(count)
-    count += 1
+list_of_inputs = []
+_thread.start_new_thread(input_thread, (list_of_inputs,))
+while not list_of_inputs:
+    while conn.poll():
+        try:
+            msg = conn.recv()
+            print(f"received: {msg}")
+            
+            conn.send(b"thx")
+            
+            print(count)
+            count += 1
+        except EOFError as err:
+            run = False
