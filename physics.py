@@ -34,9 +34,11 @@ for f in csv_files:
 
     # parameters (TODO adjust this parameters for best results)
     smoothening = 15  # shows how agresive is smoothening
-    thresh = 1  # treshold for acceleration (possible values between 0 and 2)
-    threshMovment = 5  # How many times over the tresh before starting to mesure
-    stall = 10  # How many times under the tresh before velocity is set to 0
+    thresh = 0.3  # treshold for acceleration (possible values between 0 and 2)
+    threshMovment = 3  # How many times over the tresh before starting to mesure
+    stall = 10  # For corrupt data
+    stallUpper = 15  # stallUpper - stall = times under the tresh before velocity is set to 0
+
 
     # filtering signal
     data["accX"] = smooth(data['accX'], smoothening)
@@ -50,7 +52,7 @@ for f in csv_files:
         accX = data.loc[i, "accX"]
 
         # threshold for data cleanup. Recognize big changes in accel, and start messuring speed
-        if(abs(accX) > thresh and threshX < 20):
+        if(abs(accX) > thresh and threshX < stallUpper):
             threshX += 1
         elif(threshX > 0):
             threshX -= 1
@@ -64,7 +66,7 @@ for f in csv_files:
             speedX = 0
 
         speedX += (timeDiff * accX)/100
-        distanceX += (speedX*timeDiff)/100
+        distanceX += (speedX*timeDiff)/10
         data.loc[i, "speedX"] = speedX
         data.loc[i, "distanceX"] = distanceX
 
@@ -72,7 +74,7 @@ for f in csv_files:
         accY = data.loc[i, "accY"]
 
         # threshold for data cleanup. Recognize big changes in accel, and start messuring speed
-        if(abs(accY) > thresh and threshY < 20):
+        if(abs(accY) > thresh and threshY < stallUpper):
             threshY += 1
         elif(threshY > 0):
             threshY -= 1
@@ -86,6 +88,7 @@ for f in csv_files:
             speedY = 0
 
         speedY += (timeDiff * accY)/100
+
         distanceY += (speedY*timeDiff)/100
         data.loc[i, "speedY"] = speedY
         data.loc[i, "distanceY"] = distanceY
