@@ -27,8 +27,8 @@ for f in csv_files:
     speedCheckX = speedCheckY = False
 
     # parameters (TODO adjust this parameters for best results )
-    smoothening = 80  # shows how agresive is smoothening
-    thresh = 0.05  # treshold for acceleration (possible values between 0 and 2)
+    smoothening = 97  # shows how agresive is smoothening
+    thresh = 0.1  # treshold for acceleration (possible values between 0 and 2)
     threshMovment = 1  # How many times over the tresh before starting to mesure 
     stall = 10  # For corrupt data 
     stallUpper = 30  # stallUpper - stall = times under the tresh before velocity is set to 0
@@ -86,6 +86,7 @@ for f in csv_files:
         data.loc[i, "velocityX"] = velocityX
         data.loc[i, "distanceX"] = distanceX
 
+        
         # Y axis (everything the same as X axis, put in function perhaps?)
         accY = data.loc[i, "accY"]
 
