@@ -4,8 +4,20 @@ import time
 import sys
 import _thread
 import signal
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
 
-# TODO continuous transfer
+import os             #TODO remove when mergin -> just for testing
+import glob           # -||--
+
+
+# function for signal filtering
+def smooth(y, box_pts):
+    box = np.ones(box_pts)/box_pts
+    y_smooth = np.convolve(y, box, mode='same')
+    return y_smooth
+
 
 def input_thread(list_of_inputs):
     input()

@@ -1,9 +1,11 @@
+from importlib.machinery import WindowsRegistryFinder
 from multiprocessing import connection
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
 import plyer
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.core.window import Window
 import socket
 from multiprocessing.connection import Client
 from threading import Thread
@@ -14,18 +16,22 @@ server_ip = "88.200.89.206"
 server_port = 4444
 
 class SettingsScreen (Screen):
-    pass
+    def activate_accelerometer(self):
+        sensor = plyer.accelerometer
+        sensor.enable()
 
 class MouseScreen (Screen):
     left_value = False
     right_value = False
+
+    hor_line = Window.size[1] * 3/4
 
     def __init__(self, **kwargs):
         super(Screen, self).__init__(**kwargs)
         t = Thread(target=self.connection_fun)
         t.daemon = True
         t.start()
-
+       
     def setLeft (self, *args):
         self.left_value = True
     
@@ -40,7 +46,8 @@ class MouseScreen (Screen):
     
     def connection_fun(self):
         print("")
-        server_ip = "88.200.89.206"
+        #server_ip = "88.200.89.206"
+        server_ip = "192.168.43.196"
         server_port = 4444
         has_data = True
         try:
@@ -51,7 +58,8 @@ class MouseScreen (Screen):
             while has_data:
                 try:
                     sensor_data = self.get_data()
-                    connection.send(sensor_data)     
+                    data = f"{sensor_data}, {self.left_value}, {self.right_value}"
+                    connection.send(data)     
                     info = connection.recv()
                 except ValueError as e:
                     print("Cant send this data")
@@ -60,15 +68,17 @@ class MouseScreen (Screen):
             print("Cant connect")
 
 
+
     def get_data(self):
         try:
             sensor = plyer.accelerometer
-            sensor.enable()
-            return [sensor.acceleration, self.left_value, self.right_value]
+            #sensor.enable()
+            print(sensor.acceleration)
+            return sensor.acceleration
 
         except Exception:
-            return (self.left_value, self.right_value)
-            #return "Could not enable accelerometer!"
+            #return (self.left_value, self.right_value)
+            return "Could not enable accelerometer!"
 
 class Mouse (App):
     def build (self):

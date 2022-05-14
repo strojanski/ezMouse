@@ -1,11 +1,15 @@
 <SettingsScreen>:
     BoxLayout:
+        Button: 
+            text: "Activate Accelerometer"
+            on_release: root.activate_accelerometer()
         Button:
             text: 'Goto Mouse'
             on_release: root.manager.current = 'MouseScreen'
 
 <MouseScreen>:
     BoxLayout:
+        pos: 0, root.hor_line
         Button:
             text: 'Left'
             on_press: root.setLeft()
