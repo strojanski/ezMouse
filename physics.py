@@ -55,4 +55,5 @@ for f in csv_files:
             data.loc[i, "pot"] = pot
 
     data.plot(x='time', y=['x', 'hitrost', 'pot'])
+    plt.title(f.removeprefix(path+"/"))
     plt.show()
