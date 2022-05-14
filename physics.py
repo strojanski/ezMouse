@@ -41,7 +41,7 @@ for f in csv_files:
     thresh = 0.3  # treshold for acceleration (possible values between 0 and 2)
     threshMovment = 3  # How many times over the tresh before starting to mesure
     stall = 10  # For corrupt data
-    stallUpper = 15  # stallUpper - stall = times under the tresh before velocity is set to 0
+    stallUpper = 4  # stallUpper - stall = times under the tresh before velocity is set to 0
 
     #corrupt velocity debuging
     velocityXDebug = accXDebug = 0
@@ -54,13 +54,15 @@ for f in csv_files:
     # for i in range(0, (len(data) - par), par):
     for i in range(len(data)):
 
-        timeDiff = data.loc[i, "time"] - timeDiff
+        # print("prejsni cikel", data.loc[i, "time"], timeDiff)
+        timeDiff = data.loc[i, "time"] - data.loc[max(i - 1, 0), "time"]
+        # print(data.loc[i, "time"], timeDiff)
 
         # X axis
         accX = data.loc[i, "accX"]
 
         # threshold for data cleanup. Recognize big changes in accel, and start messuring velocity
-        if(abs(accX) > thresh and threshX < stallUpper):
+        """if(abs(accX) > thresh and threshX < stallUpper):
             threshX += 1
         elif(threshX > 0):
             threshX -= 1
@@ -81,10 +83,10 @@ for f in csv_files:
             velocityX = 0
             XDebug = False
         velocityXDebug = velocityX
-        accXDebug = accX
+        accXDebug = accX"""
 
-        velocityX += (timeDiff * accX)/100
-        distanceX += (velocityX*timeDiff)/10
+        velocityX += (timeDiff * accX)*10
+        distanceX += (velocityX*timeDiff)
         data.loc[i, "velocityX"] = velocityX
         data.loc[i, "distanceX"] = distanceX
 
@@ -92,7 +94,7 @@ for f in csv_files:
         accY = data.loc[i, "accY"]
 
         # threshold for data cleanup. Recognize big changes in accel, and start messuring velocity
-        if(abs(accY) > thresh and threshY < stallUpper):
+        """if(abs(accY) > thresh and threshY < stallUpper):
             threshY += 1
         elif(threshY > 0):
             threshY -= 1
@@ -103,11 +105,11 @@ for f in csv_files:
 
         # if long time no data change, then mouse is not moving and data is corupt, set velocity to 0
         if(threshY < stall):
-            velocityY = 0
+            velocityY = 0"""
 
-        velocityY += (timeDiff * accY)/100
+        velocityY += (timeDiff * accY)*10
 
-        distanceY += (velocityY*timeDiff)/100
+        distanceY += (velocityY*timeDiff)
         data.loc[i, "velocityY"] = velocityY
         data.loc[i, "distanceY"] = distanceY
 
