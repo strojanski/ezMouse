@@ -27,13 +27,15 @@ for f in csv_files:
     speedCheckX = speedCheckY = False
 
     # parameters (TODO adjust this parameters for best results )
-    smoothening = 97  # shows how agresive is smoothening
+    smoothening = 100  # shows how agresive is smoothening
     thresh = 0.1  # treshold for acceleration (possible values between 0 and 2)
-    threshMovment = 1  # How many times over the tresh before starting to mesure 
+    threshMovment = 5  # How many times over the tresh before starting to mesure 
     stall = 10  # For corrupt data 
-    stallUpper = 30  # stallUpper - stall = times under the tresh before velocity is set to 0
+    stallUpper = 40  # stallUpper - stall = times under the tresh before velocity is set to 0
 
     # filtering signal
+    data["accX"] = smooth(data['accX'], smoothening)
+    data["accY"] = smooth(data['accY'], smoothening)
     data["accX"] = smooth(data['accX'], smoothening)
     data["accY"] = smooth(data['accY'], smoothening)
 
