@@ -1,3 +1,4 @@
+from math import dist
 import socket
 from multiprocessing.connection import Listener
 import time
@@ -8,6 +9,9 @@ import numpy as np
 import pandas as pd
 import pyautogui
 
+import threading
+
+pyautogui.PAUSE = 0.01
 pd.options.mode.chained_assignment = None  # default='warn'
 
 # function for signal filtering
@@ -41,7 +45,7 @@ print ("Ready to connect")
 # Accept a connection
 conn = listener.accept()
 
-SENSITIVITY = 800
+SENSITIVITY = 100
 
 run = True
 
@@ -49,8 +53,7 @@ count = 0
 start = time.time()
 list_of_inputs = []
 _thread.start_new_thread(input_thread, (list_of_inputs,))
-df = pd.DataFrame()
-prev = pd.DataFrame()
+
 while not list_of_inputs and conn:
     try:
         while conn.poll():
@@ -60,12 +63,8 @@ while not list_of_inputs and conn:
                 # data = f"{sensor_data}, {self.left_value}, {self.right_value}"
                 # (3-tuple) bool bool = (float, float, float) bool bool
                 #print(f"received: {msg}")
-                
-                if not prev.empty:
-                    prev = df
-
-                print(msg.head())
-                print("")
+     
+                #print(msg.head())
                 df = msg.iloc[1:, :]
                 data = df
                 print(df.head())
@@ -138,17 +137,10 @@ while not list_of_inputs and conn:
                 #    distanceX = 0
                 #if not pyautogui.onSscreen(pyautogui.position()[1]+distanceY*SENSITIVITY):
                 #    distanceY = 0
-                pyautogui.moveRel(distanceX*SENSITIVITY*-1, distanceY*SENSITIVITY)
-                
-                if True in df["left_value"].unique():
-                    pyautogui.mouseDown()
-                else:
-                    pyautogui.mouseUp()
-                if True in df["right_value"].unique():
-                    pyautogui.mouseDown(button="right")
-                else:
-                    pyautogui.mouseUp(button="right")
-
+                left = df.loc[i,"left_value"]
+                right = df.loc[i,"right_value"]
+                print(left, right)
+                pyautogui.moveRel(distanceX*SENSITIVITY, distanceY*SENSITIVITY*-1)  # move mouse 10 pixels down
 
                 conn.send(b"thx")
                 
@@ -160,4 +152,3 @@ while not list_of_inputs and conn:
             #    conn.close()
     except KeyboardInterrupt:
         conn.close()                
-

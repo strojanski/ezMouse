@@ -1,3 +1,4 @@
+from http import server
 from importlib.machinery import WindowsRegistryFinder
 from multiprocessing import connection
 from kivy.app import App
@@ -48,6 +49,7 @@ class MouseScreen (Screen):
         #server_ip = input("Input device IP")
         #server_ip = "192.169.56.1"
         server_ip = "88.200.89.206"
+        #server_ip = "192.168.43.182"
         #server_ip = "192.168.43.196"
         server_port = 4444
         has_data = True
@@ -59,7 +61,7 @@ class MouseScreen (Screen):
             while has_data:
                 try:
                     sensor_data = []
-                    for i in range(50):
+                    for i in range(75):
                         data_array = [self.get_data()[0],
                                       self.get_data()[1],
                                       self.get_data()[2],
@@ -90,8 +92,8 @@ class MouseScreen (Screen):
 
         except Exception:
             #return (self.left_value, self.right_value)
-            return (None, None, None)
-#            return (3.0, 0.0, 0.0)
+            #return (None, None, None)
+            return (0.6, 0.0, 0.0)
 
 class Mouse (App):
     def build (self):
