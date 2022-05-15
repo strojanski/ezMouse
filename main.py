@@ -32,7 +32,7 @@ class MouseScreen (Screen):
         t.daemon = True
         t.start()
        
-    def setLeft (self, *args):
+    def setLeft (self, *args):  
         self.left_value = True
     
     def resetLeft (self, *args):
@@ -45,6 +45,8 @@ class MouseScreen (Screen):
         self.right_value = False
     
     def connection_fun(self, *args):
+        #server_ip = input("Input device IP")
+        #server_ip = "192.169.56.1"
         server_ip = "88.200.89.206"
         #server_ip = "192.168.43.196"
         server_port = 4444
