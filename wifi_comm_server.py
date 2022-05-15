@@ -14,6 +14,7 @@ import threading
 
 pyautogui.PAUSE = 0.01
 pd.options.mode.chained_assignment = None  # default='warn'
+pyautogui.FAILSAFE = False
 
 # function for signal filtering
 def smooth(y, box_pts):
@@ -68,7 +69,7 @@ while not list_of_inputs and conn:
                 #print(msg.head())
                 df = msg.iloc[1:, :]
                 data = df
-                print(df.head())
+                #print(df.head())
 
                 # set initial values (TODO - adjust when live data)
                 velocityX = velocityY = timeDiff = distanceX = distanceY = accX = accY = threshX = threshY = 0
@@ -141,15 +142,20 @@ while not list_of_inputs and conn:
                 left = df.loc[i,"left_value"]
                 if left:
                     pyautogui.mouseDown()
+                else:
                     pyautogui.mouseUp() 
                 right = df.loc[i,"right_value"]
+                if right:
+                    pyautogui.mouseDown(button="right")
+                    pyautogui.mouseUp(button="right") 
                 print(left, right)
                 if (pyautogui.size()[0] - pyautogui.position()[0]+distanceX*SENSITIVITY < 0):
-                    distanceX = 0
+                    distanceX = -1
 
-                if (pyautogui.size()[1] - pyautogui.position()[1]+distanceY*SENSITIVITY < 0):
-                    distanceY = 0
-                pyautogui.moveRel(distanceX*SENSITIVITY*-1, distanceY*SENSITIVITY)  # move mouse 10 pixels down
+                # Uncomment to set vertical margin
+                #if (pyautogui.size()[1] - pyautogui.position()[1]+distanceY*SENSITIVITY < 0):
+                #    distanceY = 1
+                pyautogui.moveRel(distanceX*SENSITIVITY*-1, distanceY*SENSITIVITY, 0.05)  # move mouse 10 pixels down
 
                 conn.send(b"thx")
                 
