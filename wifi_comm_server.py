@@ -5,7 +5,6 @@ import sys
 import _thread
 import signal
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 import pyautogui
 
