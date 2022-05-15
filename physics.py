@@ -97,8 +97,8 @@ for f in csv_files:
         velocityX += (timeDiff * accX)*10
 
         # if acc change prefix reset speedCheck
-        if(i > 0 and (data.loc[i - 1, "accX"]*accX) < 0):
-            speedCheckX = False
+        # if(i > 0 and (data.loc[i - 1, "accX"]*accX) < 0):
+        #    speedCheckX = False
 
         # velocity adjustment for hard stop
         if(i > 0 and (data.loc[i-1, "velocityX"] * velocityX) < 0):
@@ -133,8 +133,8 @@ for f in csv_files:
         velocityY += (timeDiff * accY)*10
 
         # if acc change prefix reset speedCheck
-        if(i > 0 and (data.loc[i - 1, "accY"]*accY) < 0):
-            speedCheckY = False
+        # if(i > 0 and (data.loc[i - 1, "accY"]*accY) < 0):
+        #     speedCheckY = False
         
         # velocity adjustment for hard stop
         if(i > 0 and (data.loc[i-1, "velocityY"] * velocityY) < 0):
