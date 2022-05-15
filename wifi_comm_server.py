@@ -9,12 +9,23 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import pyautogui
 
+pd.options.mode.chained_assignment = None  # default='warn'
 
 # function for signal filtering
 def smooth(y, box_pts):
     box = np.ones(box_pts)/box_pts
     y_smooth = np.convolve(y, box, mode='same')
     return y_smooth
+
+def gladi(a, kolicina):
+    len = a.shape[0]   
+    gladek = np.empty(len, dtype=float)
+    for i in range(len):
+        j = max((kolicina - i), 0)
+        k = max(i-kolicina,0)
+        l = sum(a[k:max(0,i-1)])
+        gladek[i] = (j * gladek[k] + l)/kolicina
+    return gladek
 
 def input_thread(list_of_inputs):
     input()
@@ -31,43 +42,47 @@ print ("Ready to connect")
 # Accept a connection
 conn = listener.accept()
 
+SENSITIVITY = 800
+
 run = True
 
 count = 0
 start = time.time()
 list_of_inputs = []
 _thread.start_new_thread(input_thread, (list_of_inputs,))
+df = pd.DataFrame()
+prev = pd.DataFrame()
 while not list_of_inputs:
     while conn.poll():
         try:
             msg = conn.recv()
+            
             # data = f"{sensor_data}, {self.left_value}, {self.right_value}"
             # (3-tuple) bool bool = (float, float, float) bool bool
             #print(f"received: {msg}")
             
-            #convert string to pandas df TODO this is not correct yet
-            #df = pd.read_csv(msg, sep=",")
+            if not prev.empty:
+                prev = df
+
             print(msg.head())
             print("")
             df = msg.iloc[1:, :]
             data = df
-            if df["accX"].values[0] == None:
-                data = df.fillna(0.0)
             print(df.head())
 
             # set initial values (TODO - adjust when live data)
             velocityX = velocityY = timeDiff = distanceX = distanceY = accX = accY = threshX = threshY = 0
 
             # parameters (TODO adjust this parameters for best results )
-            smoothening = 100  # shows how agresive is smoothening
-            thresh = 0.05  # treshold for acceleration (possible values between 0 and 2)
+            smoothening = 15  # shows how aggressive is smoothening
+            thresh = 0.5  # treshold for acceleration (possible values between 0 and 2)
             threshMovment = 1  # How many times over the tresh before starting to mesure 
             stall = 10  # For corrupt data 
             stallUpper = 25  # stallUpper - stall = times under the tresh before velocity is set to 0
 
             # filtering signal
-            data["accX"] = smooth(data['accX'], smoothening)
-            data["accY"] = smooth(data['accY'], smoothening)
+            data.loc[:,"accX"] = gladi(data.loc[:,'accX'], smoothening)
+            data.loc[:,"accY"] = gladi(data.loc[:,'accY'], smoothening)
 
             for i in range(1, len(data)):
                 #time differenc between mesurments (for velocity and distance calculation)
@@ -119,7 +134,21 @@ while not list_of_inputs:
                 velocityY += (timeDiff * accY)*10
                 distanceY += (velocityY*timeDiff)
 
-            #pyautogui.moveRel(distanceX*10, distanceY*10, 1)
+            #if (pyautogui.position()[0]+distanceX*SENSITIVITY >= pyautogui.):
+            #    distanceX = 0
+            #if not pyautogui.onSscreen(pyautogui.position()[1]+distanceY*SENSITIVITY):
+            #    distanceY = 0
+            pyautogui.moveRel(distanceX*SENSITIVITY, distanceY*SENSITIVITY*-1)
+            
+            if True in df["left_value"].unique():
+                pyautogui.mouseDown()
+            else:
+                pyautogui.mouseUp()
+            if True in df["right_value"].unique():
+                pyautogui.mouseDown(button="right")
+            else:
+                pyautogui.mouseUp(button="right")
+
 
             conn.send(b"thx")
             
