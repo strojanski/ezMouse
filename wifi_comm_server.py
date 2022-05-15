@@ -5,6 +5,7 @@ import time
 import sys
 import _thread
 import signal
+from turtle import distance
 import numpy as np
 import pandas as pd
 import pyautogui
@@ -138,9 +139,17 @@ while not list_of_inputs and conn:
                 #if not pyautogui.onSscreen(pyautogui.position()[1]+distanceY*SENSITIVITY):
                 #    distanceY = 0
                 left = df.loc[i,"left_value"]
+                if left:
+                    pyautogui.mouseDown()
+                    pyautogui.mouseUp() 
                 right = df.loc[i,"right_value"]
                 print(left, right)
-                pyautogui.moveRel(distanceX*SENSITIVITY, distanceY*SENSITIVITY*-1)  # move mouse 10 pixels down
+                if (pyautogui.size()[0] - pyautogui.position()[0]+distanceX*SENSITIVITY < 0):
+                    distanceX = 0
+
+                if (pyautogui.size()[1] - pyautogui.position()[1]+distanceY*SENSITIVITY < 0):
+                    distanceY = 0
+                pyautogui.moveRel(distanceX*SENSITIVITY*-1, distanceY*SENSITIVITY)  # move mouse 10 pixels down
 
                 conn.send(b"thx")
                 
