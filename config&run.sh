@@ -1,0 +1,1 @@
+pip3 install numpy pandas pyautogui && python3 wifi_comm_server.py
