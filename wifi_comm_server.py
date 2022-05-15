@@ -66,10 +66,8 @@ while not list_of_inputs and conn:
                 # (3-tuple) bool bool = (float, float, float) bool bool
                 #print(f"received: {msg}")
      
-                #print(msg.head())
                 df = msg.iloc[1:, :]
                 data = df
-                #print(df.head())
 
                 # set initial values (TODO - adjust when live data)
                 velocityX = velocityY = timeDiff = distanceX = distanceY = accX = accY = threshX = threshY = 0
@@ -148,7 +146,6 @@ while not list_of_inputs and conn:
                 if right:
                     pyautogui.mouseDown(button="right")
                     pyautogui.mouseUp(button="right") 
-                print(left, right)
                 if (pyautogui.size()[0] - pyautogui.position()[0]+distanceX*SENSITIVITY < 0):
                     distanceX = -1
 
@@ -159,7 +156,6 @@ while not list_of_inputs and conn:
 
                 conn.send(b"thx")
                 
-                print(count)
                 count += 1
             except EOFError as err:
                 run = False
