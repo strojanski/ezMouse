@@ -45,12 +45,6 @@ for f in csv_files:
     stallUpper = 40  # stallUpper - stall = times under the tresh before velocity is set to 0
 
     # filtering signal
-<<<<<<< HEAD
-    data["accX"] = smooth(data['accX'], smoothening)
-    data["accX"] = smooth(data['accX'], smoothening)
-    data["accY"] = smooth(data['accY'], smoothening)
-    data["accY"] = smooth(data['accY'], smoothening)
-=======
     # data["accX"] = smooth(data['accX'], smoothening)
     # data["accY"] = smooth(data['accY'], smoothening)
 
@@ -74,7 +68,6 @@ for f in csv_files:
     # data.plot(x="time", y=['accX', 'accY'])
     # plt.title(h)
     # plt.show
->>>>>>> 9d12068139fde2cb691e3c2e1136711c3fa26470
 
     for i in range(len(data)):
         #time differenc between mesurments (for velocity and distance calculation)

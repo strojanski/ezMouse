@@ -71,6 +71,7 @@ while not list_of_inputs:
 
             # set initial values (TODO - adjust when live data)
             velocityX = velocityY = timeDiff = distanceX = distanceY = accX = accY = threshX = threshY = 0
+            speedCheckX = speedCheckY = False
 
             # parameters (TODO adjust this parameters for best results )
             smoothening = 15  # shows how aggressive is smoothening
@@ -102,6 +103,7 @@ while not list_of_inputs:
                 
                 # if long time no data change, then mouse is not moving and data is corupt, set velocity to 0 
                 if(threshX < stall):
+                    speedCheckX = False
                     velocityX = 0
 
                 # Recognize pattern (big acceleration change then oposite acceleration => set vel to 0 after that) TODO
@@ -109,6 +111,15 @@ while not list_of_inputs:
 
                 #velicity and distance calc
                 velocityX += (timeDiff * accX)*10
+                
+                # velocity adjustment for hard stop
+                if(i > 0 and (data.loc[i-1, "velocityX"] * velocityX) < 0):
+                    speedCheckX = True
+
+                # velocity to 0
+                if(speedCheckX):
+                    velocityX = 0
+
                 distanceX += (velocityX*timeDiff)
                 #data.loc[i, "velocityX"] = velocityX
                 #data.loc[i, "distanceX"] = distanceX
@@ -128,9 +139,17 @@ while not list_of_inputs:
 
                 # if long time no data change, then mouse is not moving and data is corupt, set velocity to 0
                 if(threshY <= stall):
+                    speedCheckY = False
                     velocityY = 0
 
                 velocityY += (timeDiff * accY)*10
+                # velocity adjustment for hard stop
+                if(i > 0 and (data.loc[i-1, "velocityY"] * velocityY) < 0):
+                    speedCheckY = True
+
+                # velocity to 0
+                if(speedCheckY):
+                    velocityY = 0
                 distanceY += (velocityY*timeDiff)
 
             #if (pyautogui.position()[0]+distanceX*SENSITIVITY >= pyautogui.):
