@@ -11,6 +11,15 @@ def smooth(y, box_pts):
     y_smooth = np.convolve(y, box, mode='same')
     return y_smooth
 
+def gladi(a, kolicina):
+    gladek = np.empty(200, dtype=float)
+    for i in range(200):
+        j = max((kolicina - i), 0)
+        k = max(i-kolicina,0)
+        l = sum(a[k:max(0,i-1)])
+        gladek[i] = (j * gladek[k] + l)/kolicina
+    return gladek
+
 # path for test data  #TODO remove when mergin -> just for testing with imported data
 path = os.getcwd() + "/Testdata"
 csv_files = glob.glob(os.path.join(path, "*.csv"))
@@ -27,17 +36,33 @@ for f in csv_files:
     speedCheckX = speedCheckY = False
 
     # parameters (TODO adjust this parameters for best results )
-    smoothening = 100  # shows how agresive is smoothening
+    smoothening = 30  # shows how agresive is smoothening
     thresh = 0.1  # treshold for acceleration (possible values between 0 and 2)
     threshMovment = 5  # How many times over the tresh before starting to mesure 
     stall = 10  # For corrupt data 
     stallUpper = 40  # stallUpper - stall = times under the tresh before velocity is set to 0
 
     # filtering signal
-    data["accX"] = smooth(data['accX'], smoothening)
-    data["accY"] = smooth(data['accY'], smoothening)
-    data["accX"] = smooth(data['accX'], smoothening)
-    data["accY"] = smooth(data['accY'], smoothening)
+    
+    # data["accX"] = smooth(data['accX'], smoothening)
+    # data["accY"] = smooth(data['accY'], smoothening)
+
+    timeDiff = 0.005
+
+    for j in range(len(data)):
+        data.loc[j, "time"] = j * timeDiff
+
+    prejx = prejy = 0
+    for h in range(0, len(data) - 199, 200):
+        time = data.loc[h:h+200, "time"].values
+        xos = data.loc[h:h+200, "accX"].values
+        yos = data.loc[h:h+200, "accY"].values
+        xos = gladi(xos, 30)
+        yos = gladi(yos, 30)
+        prejx = xos[199]
+        prejy = yos[199]
+        data.loc[h:h+199, "accX"] = xos
+        data.loc[h:h+199, "accY"] = yos
 
     for i in range(len(data)):
         #time differenc between mesurments (for velocity and distance calculation)
@@ -87,7 +112,6 @@ for f in csv_files:
         distanceX += (velocityX*timeDiff)
         data.loc[i, "velocityX"] = velocityX
         data.loc[i, "distanceX"] = distanceX
-
         
         # Y axis (everything the same as X axis, put in function perhaps?)
         accY = data.loc[i, "accY"]
