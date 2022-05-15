@@ -1,20 +1,62 @@
+#: import WipeTransition kivy.uix.screenmanager.WipeTransition
+
+
 <SettingsScreen>:
+
+    canvas:
+        Color:
+            rgb: (0/255, 0/255, 0/255)
+        Rectangle:
+            pos: self.pos
+            size: self.size
     BoxLayout:
-        Button: 
-            text: "Activate Accelerometer"
-            on_release: root.activate_accelerometer()
-        Button:
-            text: 'Goto Mouse'
-            on_release: root.manager.current = 'MouseScreen'
+        orientation: 'vertical'
+        BoxLayout:
+            size_hint: 0.5, 1
+            pos_hint: {"center_x": 0.5, "center_y:": 0.5}
+            Button: 
+                font_size: 30
+                text: "Activate Accelerometer"
+                color: (180/255, 180/255, 180/255)
+                on_release: root.activate_accelerometer()
+                background_color: (33/255, 26/255, 61/255)
+        BoxLayout:
+            size_hint: 0.5, 1
+            pos_hint: {"center_x": 0.5, "center_y:": 0.5}
+            Button:
+                font_size: 30
+                text: 'Goto Mouse'
+                color: (180/255, 180/255, 180/255)
+                on_release: root.manager.current = 'MouseScreen'
+                on_release: root.manager.transition.direction = "left"
+                background_color: (116/255, 116/255, 84/255)
 
 <MouseScreen>:
+    transition: WipeTransition()
     BoxLayout:
-        pos: 0, root.hor_line
-        Button:
-            text: 'Left'
-            on_press: root.setLeft()
-            on_release: root.resetLeft()
-        Button:
-            text: 'Right'
-            on_press: root.setRight()
-            on_release: root.resetRight()
+        size_hint: 1, 50/100
+        pos_hint: {"center_x": 0.5, "center_y": 0.75}
+        orientation: 'vertical'
+        BoxLayout:
+            size_hint: 1, 0.05
+            pos_hint: {"center_x": 0.5, "center_y": 0}
+            Button:
+                text: 'Settings'
+                on_release: root.manager.current = 'SettingsScreen'
+                on_release: root.manager.transition.direction = "right"
+                background_color: (165/255, 209/255, 208/255)
+        BoxLayout:
+            size_hint: 1, 50/100
+            pos_hint: {"center_x": 0.5, "center_y": 0.75}
+            Button:
+                text: 'Left'
+                font_size: 30
+                on_press: root.setLeft()
+                on_release: root.resetLeft()
+                background_color: (183/255, 215/255, 167/255)
+            Button:
+                font_size: 30
+                text: 'Right'
+                on_press: root.setRight()
+                on_release: root.resetRight()
+                background_color: (165/255, 209/255, 208/255)

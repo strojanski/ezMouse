@@ -25,7 +25,6 @@ class MouseScreen (Screen):
     left_value = False
     right_value = False
 
-    hor_line = Window.size[1] * 3/4
 
     def __init__(self, **kwargs):
         super(Screen, self).__init__(**kwargs)
@@ -45,8 +44,7 @@ class MouseScreen (Screen):
     def resetRight (self, *args):
         self.right_value = False
     
-    def connection_fun(self):
-        print("")
+    def connection_fun(self, *args):
         server_ip = "88.200.89.206"
         #server_ip = "192.168.43.196"
         server_port = 4444
@@ -59,7 +57,7 @@ class MouseScreen (Screen):
             while has_data:
                 try:
                     sensor_data = []
-                    for i in range(200):
+                    for i in range(50):
                         data_array = [self.get_data()[0],
                                       self.get_data()[1],
                                       self.get_data()[2],
